@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package task;
+
+option go_package = "example.com/rest-grpc-todo-demo-go/pb;pb";
+
+message Task {
+  int32 id = 1;
+  string title = 2;
+  bool done = 3;
+}
+
+message ListTasksRequest {}
+
+message ListTasksResponse {
+  repeated Task tasks = 1;
+}
+
+message CreateTaskRequest {
+  string title = 1;
+}
+
+service TaskService {
+  rpc ListTasks (ListTasksRequest) returns (ListTasksResponse);
+  rpc CreateTask (CreateTaskRequest) returns (Task);
+}
