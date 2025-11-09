@@ -16,6 +16,20 @@ message ListTasksResponse {
   repeated Task tasks = 1;
 }
 
+message GetTaskRequest {
+  int32 id = 1;
+}
+
+message GetTaskResponse {
+  Task task = 1;
+}
+
+message DeleteTaskRequest {
+  int32 id = 1;
+}
+
+message DeleteTaskResponse {}
+
 message CreateTaskRequest {
   string title = 1;
 }
@@ -23,4 +37,6 @@ message CreateTaskRequest {
 service TaskService {
   rpc ListTasks (ListTasksRequest) returns (ListTasksResponse);
   rpc CreateTask (CreateTaskRequest) returns (Task);
+  rpc GetTask (GetTaskRequest) returns (GetTaskResponse);
+  rpc DeleteTask (DeleteTaskRequest) returns (DeleteTaskResponse);
 }

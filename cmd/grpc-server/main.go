@@ -8,6 +8,8 @@ import (
 
 	pb "example.com/rest-grpc-todo-demo-go/pb/proto"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 var (
@@ -27,6 +29,34 @@ func (s *taskServer) ListTasks(ctx context.Context, req *pb.ListTasksRequest) (*
 	return &pb.ListTasksResponse{
 		Tasks: tasks,
 	}, nil
+}
+
+func (s *taskServer) GetTask(ctx context.Context, req *pb.GetTaskRequest) (*pb.GetTaskResponse, error) {
+	mu.Lock()
+	defer mu.Unlock()
+
+	for _, t := range tasks {
+		if t.Id == req.Id {
+			return &pb.GetTaskResponse{
+				Task: t,
+			}, nil
+		}
+	}
+	return nil, status.Errorf(codes.NotFound, "task %d not found", req.Id)
+}
+
+func (s *taskServer) DeleteTask(ctx context.Context, req *pb.DeleteTaskRequest) (*pb.DeleteTaskResponse, error) {
+	mu.Lock()
+	defer mu.Unlock()
+
+	for i, t := range tasks {
+		if t.Id == req.Id {
+			tasks = append(tasks[:i], tasks[i+1:]...)
+			return &pb.DeleteTaskResponse{}, nil
+		}
+	}
+
+	return nil, status.Errorf(codes.NotFound, "task %d not found", req.Id)
 }
 
 func (s *taskServer) CreateTask(ctx context.Context, req *pb.CreateTaskRequest) (*pb.Task, error) {
